@@ -23,3 +23,27 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+Cypress.Commands.add('loginAndSaveToken', () => {
+  return cy.request({
+    method: 'POST',
+    url: 'http://localhost:8081/login',
+    body: {
+      username: 'test2@test.fr',
+      password: 'testtest'
+    }
+  }).then((resp) => {
+    const token = resp.body.token;
+
+    // Save token in Cypress memory
+    Cypress.env('token', token);
+
+    // Also save into the app's localStorage
+    cy.window().then((win) => {
+      win.localStorage.setItem('authToken', token);
+    });
+
+    return cy.wrap(token); // allows chaining
+  });
+});
+
