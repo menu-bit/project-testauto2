@@ -3,7 +3,7 @@ describe('GET /orders - accès sans authentification', () => {
         cy.request({
             method: 'GET',
             url: 'http://localhost:8081/orders',
-            failOnStatusCode: false,
+            failOnStatusCode: false, // prevents Cypress from failing automatically on 401
         }).its('status').should('equal', 401)
     })
 

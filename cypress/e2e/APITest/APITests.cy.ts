@@ -22,12 +22,12 @@ describe('API tests', () => {
             expect(response.status).to.eq(200);
             const responseBody: me.medto = response.body;
             cy.log(JSON.stringify(responseBody));
-            expect(responseBody.email).to.equal('test2@test.fr')
+            expect(responseBody.email).to.equal('test2@test.fr');
 
         })
     })
 
-    it('Should GET detail of a products by ID', () => {
+    it('(Fiche du produit spécifique) Should GET detail of a products by ID', () => {
         cy.request({
             method: 'GET',
             url: 'http://localhost:8081/products/3',
@@ -37,53 +37,13 @@ describe('API tests', () => {
             }
 
         }).then((response) => {
-            expect(response.status).to.equal(200)
-            cy.log(JSON.stringify(response.body))
+            expect(response.status).to.equal(200);
+            cy.log(JSON.stringify(response.body));
         })
     })
 
-    it('Should get items in the cart', () => {
-        cy.loginAndSaveToken().then((token) => {
-            cy.request({
 
-                method: 'GET',
-                url: 'http://localhost:8081/orders',
-                headers: {
-                    'accept': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-
-            }).then((response) => {
-                expect(response.status).to.equal(200)
-                //expect(response.body).to.have.property('items')
-                //expect(response.body.items).to.be.an('array');           
-                cy.log(JSON.stringify(response.body))
-            });
-        })
-    })
-
-    it('Add available product in the cart', () => {
-        cy.request({
-
-            method: 'PUT',
-            url: 'http://localhost:8081/orders/add',
-            headers: {
-                'accept': 'application/json',
-                'Authorization': `Bearer ${token}`
-
-            },
-            body: {
-                'product': 10,
-                'quantity': 1
-            }
-
-        }).then((response) => {
-            expect(response.status).to.equal(200)
-            cy.log('JSON.stringify(response.body)')
-        });
-    })
-
-    it('products rupture in stock', () => {
+    it('(Produit en rupture de stock) Product rupture in stock', () => {
         cy.request({
 
             method: 'PUT',
@@ -100,5 +60,42 @@ describe('API tests', () => {
             cy.log(JSON.stringify(response.body))
         });
     })
+
+    it('(Produit disponible au panier) Add available product in the cart', () => {
+        cy.request({
+            method: 'PUT',
+            url: 'http://localhost:8081/orders/add',
+            headers: {
+                accept: 'application/json',
+                Authorization: `Bearer ${token}`
+            },
+            body: {
+                product: 10,
+                quantity: 1
+            }
+        }).then((response) => {
+            expect(response.status).to.equal(200);
+            cy.log(JSON.stringify(response.body));
+        });
+    })
+
+    it('(Liste des produits du panier) Should get items in the cart', () => {
+        cy.loginAndSaveToken().then((token) => {
+            cy.request({
+
+                method: 'GET',
+                url: 'http://localhost:8081/orders',
+                headers: {
+                    'accept': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+
+            }).then((response) => {
+                expect(response.status).to.equal(200);
+                cy.log(JSON.stringify(response.body));
+            });
+        })
+    })
+
 
 })
