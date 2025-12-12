@@ -169,18 +169,4 @@ describe('API tests', () => {
         });
     })
 
-    //Test XSS vunerability 
-    it('Check XSS vulnerability on add-to-cart route', () => {
-        const xssPayload = "<script>alert('XSS')</script>";
-
-        // Appel direct de la route
-        cy.request({
-            url: `/cart/add?id=${xssPayload}`,
-            failOnStatusCode: false
-        }).then((response) => {
-            // Le script ne doit JAMAIS apparaître dans la réponse
-            expect(response.body).not.to.contain('<script>');
-            expect(response.body).not.to.contain('alert("XSS")');
-        });
-    });
 })

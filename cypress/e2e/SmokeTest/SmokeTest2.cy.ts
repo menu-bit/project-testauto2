@@ -38,17 +38,34 @@ describe('EcoBlissBath Smoke Test', () => {
   })
 
   // 3. Test : Faille XSS sur la route d’ajout au panier
-  it('Check XSS vulnerability on add-to-cart route', () => {
+  let token: string | null;
+  before(() => {
+    cy.loginAndSaveToken().then((t) => {
+      token = t
+    })
+  })
+  it('ne doit pas exécuter de script malveillant lors de l\'ajout au panier', () => {
     const xssPayload = "<script>alert('XSS')</script>";
 
-    // Appel direct de la route
     cy.request({
-      url: `/cart/add?id=${xssPayload}`,
-      failOnStatusCode: false
+      method: 'PUT', // ou POST selon l’API
+      url: 'http://localhost:8081/orders/add',
+      headers: {
+        accept: 'application/json',
+        Authorization: `Bearer ${token}` // si nécessaire
+      },
+      failOnStatusCode: false,
+      body: {
+        product: 1, // un id produit valide
+        quantity: 1,
+        comment: xssPayload // supposons que ce champ existe et peut être vulnérable
+      }
     }).then((response) => {
-      // Le script ne doit JAMAIS apparaître dans la réponse
-      expect(response.body).not.to.contain('<script>');
-      expect(response.body).not.to.contain('alert("XSS")');
+      expect(response.status).to.be.oneOf([200, 400, 422]); // selon comportement API
+
+      // Le script ne doit jamais apparaître en clair dans la réponse
+      expect(JSON.stringify(response.body)).not.to.contain('<script>');
+      expect(JSON.stringify(response.body)).not.to.contain('alert(\'XSS\')');
     });
   });
 

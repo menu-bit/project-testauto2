@@ -18,6 +18,7 @@ describe('EcoBlissBath Smoke Test', () => {
         cy.get('app-root').click();
         cy.get('[data-cy="cart-input-lastname"]').clear();
         cy.get('[data-cy="cart-input-lastname"]').type('aaa');
+        //   cy.get('[data-cy="cart-input-lastname"]').type(`<script>alert('bonjour')</script>'`);
         cy.get('[data-cy="cart-form"] section.cart-section').click();
         cy.get('[data-cy="cart-input-firstname"]').clear();
         cy.get('[data-cy="cart-input-firstname"]').type('aaa');
